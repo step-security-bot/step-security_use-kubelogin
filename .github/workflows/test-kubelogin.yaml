@@ -51,6 +51,8 @@ on:
         required: false
         default: false
 
+permissions: {}
+
 jobs:
   test-with-github-token:
     strategy:
@@ -63,7 +65,12 @@ jobs:
 
     if: ${{ inputs.with-github-token == 'true' }}
     steps:
-    - uses: actions/checkout@v7
+    - name: Harden the runner (Audit all outbound calls)
+      uses: step-security/harden-runner@v2
+      with:
+        egress-policy: audit
+
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       name: Checkout code
     - uses: ./ # use current branch
       name: Setup kubelogin
@@ -90,7 +97,12 @@ jobs:
 
     if: ${{ inputs.with-github-token != 'true' }}
     steps:
-    - uses: actions/checkout@v7
+    - name: Harden the runner (Audit all outbound calls)
+      uses: step-security/harden-runner@v2
+      with:
+        egress-policy: audit
+
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       name: Checkout code
     - uses: ./ # use current branch
       name: Setup kubelogin
